@@ -3,43 +3,48 @@ package com.phs.myapp.stream;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.support.HttpRequestHandlerServlet;
 
 @Controller
 public class StudyMain {
 
-	//stream Ã¹»ç¿ë..
+	//stream Ã¹ï¿½ï¿½ï¿½..
 	@GetMapping("stream/study")
 	public String streamOne() {
 		/*
 		 * Stream
-		 * java 8 ºÎÅÍ »ç¿ë °¡´É
-		 * -Æ¯Â¡
-		 * 	. ±âÁ¸ ¼Ò½º µ¥ÀÌÅÍ¸¦ º¯°æÇÏÁö ¾ÊÀ½
-		 * 	. ÃÖÁ¾ ¿¬»êÀÌ È£Ãâ µÉ ¶§ Ã³¸® ¼öÇà. ¿¬»ê Ã³¸®ºñ¿ë Àı¾à...
-		 * 	. º´·ÄÃ³¸® Áö¿ø - > º´·Ä Ã³¸®¶õ?
-		 * 	. ¾÷¹«ÇÏ´Ùº¸¸é array¸¦ ¾µ ¶§°¡ ¸¹Àºµ¥... array¸¦ °¡°ø ÇÒ ¶§ À¯¿ëÇÒµí
-		 * - ÁÖ¿ä ¸Ş¼Òµå
-		 * 	. filter : ÁÖ¾îÁø Á¶°Ç¿¡ ¸Â´Â ¿ä¼Òµé¸¸ °É·¯³¿.
-		 * 	. map : °¢ ¿ä¼Ò¸¦ ´Ù¸¥ ¿ä¼Ò·Î ¸ÅÇÎ ½ÃÄÑÁÜ
-		 * 	. flatMap : °¢ ¿ä¼Ò¸¦ ½ºÆ®¸²À¸·Î ¸ÅÇÎ -> ¸ğµç ¿ä¼Ò¸¦ ÇÏ³ªÀÇ ½ºÆ®¸²À¸·Î º´ÇÕ...
-		 * 	. distinct : ½ºÆ®¸²¿¡¼­ Áßº¹µÈ ¿ä¼Ò Á¦°Å
-		 * 	. sorted : ½ºÆ®¸² Á¤·Ä
-		 * 	. limit : ½ºÆ®¸²¿¡¼­ ÃÖ´ë °³¼ö Á¦ÇÑ
-		 * 	. skip : ½ºÆ®¸²¿¡¼­ Ã³À½ n °³ÀÇ ¿ä¼Ò¸¦ Á¦¿Ü½ÃÅ´
-		 * 	. forEach : °¢ ¿ä¼Ò¿¡ ´ëÇÏ¿© ÁÖ¾îÁø µ¿ÀÛ ¼öÇà
-		 * 	. collect : ½ºÆ®¸² ¿ä¼Ò¸¦ ¼öÁı...
+		 * java 8 ë¶€í„° ì‚¬ìš© ê°€ëŠ¥
+		 * -íŠ¹ì§•
+		 * 	. ê¸°ì¡´ ì†ŒìŠ¤ ë°ì´í„°ë¥¼ ë³€ê²½í•˜ì§€ ì•ŠìŒ
+		 * 	. ìµœì¢… ì—°ì‚°ì´ í˜¸ì¶œ ë  ë•Œ ì²˜ë¦¬ ìˆ˜í–‰. ì—°ì‚° ì²˜ë¦¬ë¹„ìš© ì ˆì•½...
+		 * 	. ë³‘ë ¬ì²˜ë¦¬ ì§€ì› - > ë³‘ë ¬ ì²˜ë¦¬ë€?
+		 * 	. ì—…ë¬´í•˜ë‹¤ë³´ë©´ arrayë¥¼ ì“¸ ë•Œê°€ ë§ì€ë°... arrayë¥¼ ê°€ê³µ í•  ë•Œ ìœ ìš©í• ë“¯
+		 * - ì£¼ìš” ë©”ì†Œë“œ
+		 * 	. filter : ì£¼ì–´ì§„ ì¡°ê±´ì— ë§ëŠ” ìš”ì†Œë“¤ë§Œ ê±¸ëŸ¬ëƒ„.
+		 * 	. map : ê° ìš”ì†Œë¥¼ ë‹¤ë¥¸ ìš”ì†Œë¡œ ë§¤í•‘ ì‹œì¼œì¤Œ
+		 * 	. flatMap : ê° ìš”ì†Œë¥¼ ìŠ¤íŠ¸ë¦¼ìœ¼ë¡œ ë§¤í•‘ -> ëª¨ë“  ìš”ì†Œë¥¼ í•˜ë‚˜ì˜ ìŠ¤íŠ¸ë¦¼ìœ¼ë¡œ ë³‘í•©...
+		 * 	. distinct : ìŠ¤íŠ¸ë¦¼ì—ì„œ ì¤‘ë³µëœ ìš”ì†Œ ì œê±°
+		 * 	. sorted : ìŠ¤íŠ¸ë¦¼ ì •ë ¬
+		 * 	. limit : ìŠ¤íŠ¸ë¦¼ì—ì„œ ìµœëŒ€ ê°œìˆ˜ ì œí•œ
+		 * 	. skip : ìŠ¤íŠ¸ë¦¼ì—ì„œ ì²˜ìŒ n ê°œì˜ ìš”ì†Œë¥¼ ì œì™¸ì‹œí‚´
+		 * 	. forEach : ê° ìš”ì†Œì— ëŒ€í•˜ì—¬ ì£¼ì–´ì§„ ë™ì‘ ìˆ˜í–‰
+		 * 	. collect : ìŠ¤íŠ¸ë¦¼ ìš”ì†Œë¥¼ ìˆ˜ì§‘...
 		 * */
 		
 		List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);
-		//½ºÆ®¸²Àº ¿¬»êÀÌ ³¡³ª¸é ¼Ò¸ğµÇ±â ¶§¹®¿¡ »õ º¯¼ö¿¡ ÀúÀå ÇØ µÎ¾î¾ß ÇÔ.
-		List<Integer> filteredAndMappedNumbers = numbers.stream()	//¸®½ºÆ®¸¦ ½ºÆ®¸²À¸·Î º¯È¯
-			    .filter(n -> n % 2 == 0)							//½ºÆ®¸²¿¡¼­ Â¦¼ö¸¸ °É·¯³¿
-			    .map(n -> n * 2)									//°É·¯³½ ¿ä¼Ò¸¦ 2¹è·Î ¸¸µê
-			    .collect(Collectors.toList());						//»õ·Î¿î ¸®½ºÆ®¿¡ ¼öÁıÇØÁÜ.
+		//ìŠ¤íŠ¸ë¦¼ì€ ì—°ì‚°ì´ ëë‚˜ë©´ ì†Œëª¨ë˜ê¸° ë•Œë¬¸ì— ìƒˆ ë³€ìˆ˜ì— ì €ì¥ í•´ ë‘ì–´ì•¼ í•¨.
+		List<Integer> filteredAndMappedNumbers = numbers.stream()	//ë¦¬ìŠ¤íŠ¸ë¥¼ ìŠ¤íŠ¸ë¦¼ìœ¼ë¡œ ë³€í™˜
+			    .filter(n -> n % 2 == 0)							//ìŠ¤íŠ¸ë¦¼ì—ì„œ ì§ìˆ˜ë§Œ ê±¸ëŸ¬ëƒ„
+			    .map(n -> n * 2)									//ê±¸ëŸ¬ë‚¸ ìš”ì†Œë¥¼ 2ë°°ë¡œ ë§Œë“¦
+			    .collect(Collectors.toList());						//ìƒˆë¡œìš´ ë¦¬ìŠ¤íŠ¸ì— ìˆ˜ì§‘í•´ì¤Œ.
 		System.out.println(filteredAndMappedNumbers);
 		
 		
@@ -59,7 +64,23 @@ public class StudyMain {
 		  .flatMap(Collection::stream)
 		  .collect(Collectors.toList());
 
-		return "½ºÆ®¸² flatMap °á°úÀÔ´Ï´Ù. ::: "+resultList.toString();
+		return "stream result ::: "+resultList.toString();
+	}
+	
+	@PostMapping("stream/example")
+	@ResponseBody
+	public String streamThree
+	(
+		@RequestBody String[] data
+	) 
+	{
+		//String[] data = request.getParameterValues("data");
+		System.out.println("data ::: " + Arrays.toString(data));
+		
+		List<String> exampleList = Arrays.asList(data);
+		String column = exampleList.stream()
+				 .collect(Collectors.joining(","));
+		return "stream result ::: " + column;
 	}
 	
 

@@ -79,9 +79,50 @@ public class StudyMain {
 		
 		List<String> exampleList = Arrays.asList(data);
 		String column = exampleList.stream()
-				 .collect(Collectors.joining(","));
+				.sorted()
+				.collect(Collectors.joining(","));
 		return "stream result ::: " + column;
 	}
 	
+	@PostMapping("stream/example2")
+	@ResponseBody
+	public String streamFour
+	(
+		@RequestBody Integer[] data
+	) 
+	{
+		System.out.println("data ::: " + Arrays.toString(data));
+		
+		List<Integer> exampleList = Arrays.asList(data);
+		int sum = exampleList.stream()
+				 .filter(n -> n % 2 == 0)
+				 .mapToInt(n -> n * 2)
+				 .sum();
+		return "stream result ::: " + sum;
+	}
+	
+	@PostMapping("stream/example3")
+	@ResponseBody
+	public String streamFive
+	(
+		@RequestBody String[] data
+	) 
+	{
+		System.out.println("data ::: " + Arrays.toString(data));
+		
+		List<String> exampleList = Arrays.asList(data);
+		int result = exampleList.stream()
+				.map(s -> s.toLowerCase())
+				.filter(s -> s.contains("apple"))
+                .map(s -> 1)
+                .findFirst()
+                .orElseGet(() -> exampleList.stream()
+                		.map(s -> s.toLowerCase())
+                        .filter(s -> s.contains("banana"))
+                        .map(s -> 2)
+                        .findFirst()
+                        .orElse(0));
+		return "stream result ::: " + result;
+	}
 
 }

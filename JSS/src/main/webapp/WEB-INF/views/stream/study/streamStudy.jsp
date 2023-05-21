@@ -44,6 +44,13 @@
 	<div id="stream_03_content"></div>
 </div>
 
+<div id="stream_04_input_area">
+	<h2>Stream 04</h2>
+	<button id="stream_04">스트림_04</button>
+	<div>로또 번호 생성</div>
+	<div id="stream_04_content"></div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 <script type="text/javascript">
 	window.onload = ()=>{
@@ -118,6 +125,20 @@
 			data: JSON.stringify(data),
 			success(result){
 				con3.innerText = result;
+			}
+		})
+	})
+	
+	//스트림 4영역
+	let btn4 = document.querySelector('#stream_04');
+	let con4 = document.querySelector('#stream_04_content');
+	btn4.addEventListener('click',()=>{
+		$.ajax({
+			url: "/myapp/stream/lotto",
+			type: "POST",
+			contentType: "application/json",
+			success(result){
+				con4.innerText = result;
 			}
 		})
 	})

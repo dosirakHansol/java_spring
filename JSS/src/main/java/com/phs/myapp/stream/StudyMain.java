@@ -9,15 +9,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.support.HttpRequestHandlerServlet;
 
 @Controller
+@RequestMapping("stream")
 public class StudyMain {
 
 	//stream ù���..
-	@GetMapping("stream/study")
+	@GetMapping("study")
 	public String streamOne() {
 		/*
 		 * Stream
@@ -51,7 +53,7 @@ public class StudyMain {
 		return "stream/study/streamStudy";
 	}
 	
-	@PostMapping("stream/study")
+	@PostMapping("study")
 	@ResponseBody
 	public String streamTwo() {
 		List<List<Integer>> list = Arrays.asList(
@@ -67,7 +69,7 @@ public class StudyMain {
 		return "stream result ::: "+resultList.toString();
 	}
 	
-	@PostMapping("stream/example")
+	@PostMapping("example")
 	@ResponseBody
 	public String streamThree
 	(
@@ -84,7 +86,7 @@ public class StudyMain {
 		return "stream result ::: " + column;
 	}
 	
-	@PostMapping("stream/example2")
+	@PostMapping("example2")
 	@ResponseBody
 	public String streamFour
 	(
@@ -101,7 +103,7 @@ public class StudyMain {
 		return "stream result ::: " + sum;
 	}
 	
-	@PostMapping("stream/example3")
+	@PostMapping("example3")
 	@ResponseBody
 	public String streamFive
 	(
@@ -123,6 +125,20 @@ public class StudyMain {
                         .findFirst()
                         .orElse(0));
 		return "stream result ::: " + result;
+	}
+	
+	@PostMapping("lotto")
+	@ResponseBody
+	public String streamLotto() {
+		
+		int[] lottoNumbers = new Random()
+                .ints(1, 46)  // 1부터 45까지의 숫자를 랜덤하게 생성
+                .distinct()   // 중복 제거
+                .limit(6)     // 6개의 번호만 선택
+                .sorted()     // 번호 정렬
+                .toArray();   // 배열로 변환
+		
+		return "stream result ::: " + Arrays.toString(lottoNumbers);
 	}
 
 }
